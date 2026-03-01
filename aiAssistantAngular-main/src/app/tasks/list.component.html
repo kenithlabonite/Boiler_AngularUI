@@ -1,0 +1,285 @@
+<div class="container-fluid pt-4 px-4">
+    <!-- Success / Error Messages -->
+    <div *ngIf="showSuccess" class="d-flex justify-content-center mb-3">
+        <div class="alert alert-success py-1 px-3 small mb-0 shadow-sm" role="alert">
+            ✅ Task created successfully!
+        </div>
+    </div>
+    <div *ngIf="showDuplicateError" class="d-flex justify-content-center mb-3">
+        <div class="alert alert-warning py-1 px-3 small mb-0 shadow-sm" role="alert">
+            ⚠️ A task with this title already exists.
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">📋 My Tasks</h4>
+        <button class="btn btn-primary btn-sm" (click)="showForm = !showForm">+ New Task</button>
+    </div>
+
+    <!-- Add Task Form -->
+    <div *ngIf="showForm" class="card p-3 mb-4 shadow-sm">
+        <h6 class="mb-3">Create New Task</h6>
+        <div class="mb-2">
+            <input class="form-control" [class.is-invalid]="showFormError && !newTask.title" placeholder="Task title"
+                [(ngModel)]="newTask.title" />
+            <div class="invalid-feedback">Title is required</div>
+        </div>
+        <div class="mb-2">
+            <textarea class="form-control" rows="3" [class.is-invalid]="showFormError && !newTask.description"
+                placeholder="Describe your task... (AI will auto-set priority and deadline)"
+                [(ngModel)]="newTask.description">
+            </textarea>
+            <div class="invalid-feedback">Description is required</div>
+        </div>
+        <div class="mb-2">
+            <label class="form-label small text-muted">📅 Custom Deadline (optional)</label>
+            <input type="date" class="form-control" [(ngModel)]="newTask.deadline" [min]="today" />
+            <div class="form-text">Leave blank for AI-suggested deadline.</div>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-success btn-sm" (click)="createTask()">✓ Create</button>
+            <button class="btn btn-secondary btn-sm"
+                (click)="showForm = false; showFormError = false; showDuplicateError = false">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-4">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Loading tasks...</p>
+    </div>
+
+    <!-- 4 Column Layout -->
+    <div *ngIf="!loading" class="row g-3">
+
+        <!-- HIGH -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <strong>🔴 High Priority</strong>
+                    <span class="badge bg-white text-danger">{{ highTasks.length }}</span>
+                </div>
+                <div class="card-body p-2">
+                    <div *ngIf="highTasks.length === 0" class="text-center text-muted py-3">No high priority tasks</div>
+                    <div *ngFor="let task of highTasks" class="task-card border rounded p-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <strong class="d-block">{{ task.title }}</strong>
+                                <small class="text-muted">{{ task.description }}</small>
+                                <div class="mt-1">
+                                    <span class="badge" [class.bg-warning]="task.status === 'Pending'"
+                                        [class.text-dark]="task.status === 'Pending'"
+                                        [class.bg-success]="task.status === 'Completed'">{{ task.status }}</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">
+                                    📅 <ng-container *ngIf="safeDate(task.deadline); else noDeadline">{{
+                                        safeDate(task.deadline) | date:'mediumDate' }}</ng-container>
+                                    <ng-template #noDeadline><span class="text-danger">No deadline</span></ng-template>
+                                </small>
+                                <small class="text-muted">🕐 {{ task.created_at | date:'short' }}</small>
+                            </div>
+                            <div class="d-flex flex-column gap-1 ms-2">
+                                <!-- Hiding management buttons for users as per request -->
+                                <!-- <button class="btn btn-xs btn-outline-primary" title="Edit" (click)="openEdit(task)">✏️</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-secondary" title="Deactivate" (click)="promptDeactivate(task.id)">🚫</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-danger" title="Delete" (click)="deleteTask(task.id)">✕</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEDIUM -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <strong>🟡 Medium Priority</strong>
+                    <span class="badge bg-white text-dark">{{ mediumTasks.length }}</span>
+                </div>
+                <div class="card-body p-2">
+                    <div *ngIf="mediumTasks.length === 0" class="text-center text-muted py-3">No medium priority tasks
+                    </div>
+                    <div *ngFor="let task of mediumTasks" class="task-card border rounded p-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <strong class="d-block">{{ task.title }}</strong>
+                                <small class="text-muted">{{ task.description }}</small>
+                                <div class="mt-1">
+                                    <span class="badge" [class.bg-warning]="task.status === 'Pending'"
+                                        [class.text-dark]="task.status === 'Pending'"
+                                        [class.bg-success]="task.status === 'Completed'">{{ task.status }}</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">
+                                    📅 <ng-container *ngIf="safeDate(task.deadline); else noDeadlineMed">{{
+                                        safeDate(task.deadline) | date:'mediumDate' }}</ng-container>
+                                    <ng-template #noDeadlineMed><span class="text-danger">No
+                                            deadline</span></ng-template>
+                                </small>
+                                <small class="text-muted">🕐 {{ task.created_at | date:'short' }}</small>
+                            </div>
+                            <div class="d-flex flex-column gap-1 ms-2">
+                                <!-- Hiding management buttons for users as per request -->
+                                <!-- <button class="btn btn-xs btn-outline-primary" title="Edit" (click)="openEdit(task)">✏️</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-secondary" title="Deactivate" (click)="promptDeactivate(task.id)">🚫</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-danger" title="Delete" (click)="deleteTask(task.id)">✕</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOW -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <strong>🟢 Low Priority</strong>
+                    <span class="badge bg-white text-success">{{ lowTasks.length }}</span>
+                </div>
+                <div class="card-body p-2">
+                    <div *ngIf="lowTasks.length === 0" class="text-center text-muted py-3">No low priority tasks</div>
+                    <div *ngFor="let task of lowTasks" class="task-card border rounded p-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <strong class="d-block">{{ task.title }}</strong>
+                                <small class="text-muted">{{ task.description }}</small>
+                                <div class="mt-1">
+                                    <span class="badge" [class.bg-warning]="task.status === 'Pending'"
+                                        [class.text-dark]="task.status === 'Pending'"
+                                        [class.bg-success]="task.status === 'Completed'">{{ task.status }}</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">
+                                    📅 <ng-container *ngIf="safeDate(task.deadline); else noDeadlineLow">{{
+                                        safeDate(task.deadline) | date:'mediumDate' }}</ng-container>
+                                    <ng-template #noDeadlineLow><span class="text-danger">No
+                                            deadline</span></ng-template>
+                                </small>
+                                <small class="text-muted">🕐 {{ task.created_at | date:'short' }}</small>
+                            </div>
+                            <div class="d-flex flex-column gap-1 ms-2">
+                                <!-- Hiding management buttons for users as per request -->
+                                <!-- <button class="btn btn-xs btn-outline-primary" title="Edit" (click)="openEdit(task)">✏️</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-secondary" title="Deactivate" (click)="promptDeactivate(task.id)">🚫</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-danger" title="Delete" (click)="deleteTask(task.id)">✕</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPLETED -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <strong>✅ Completed</strong>
+                    <span class="badge bg-white text-secondary">{{ completedTasks.length }}</span>
+                </div>
+                <div class="card-body p-2">
+                    <div *ngIf="completedTasks.length === 0" class="text-center text-muted py-3">No completed tasks
+                    </div>
+                    <div *ngFor="let task of completedTasks" class="task-card border rounded p-2 mb-2 opacity-75">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <strong class="d-block text-decoration-line-through text-muted">{{ task.title
+                                    }}</strong>
+                                <small class="text-muted">{{ task.description }}</small>
+                                <span class="badge bg-success d-block mt-1" style="width:fit-content">{{ task.status
+                                    }}</span>
+                                <small class="text-muted d-block mt-1">
+                                    📅 <ng-container *ngIf="safeDate(task.deadline); else noDeadlineComp">{{
+                                        safeDate(task.deadline) | date:'mediumDate' }}</ng-container>
+                                    <ng-template #noDeadlineComp><span class="text-danger">No
+                                            deadline</span></ng-template>
+                                </small>
+                                <small class="text-muted">🕐 {{ task.created_at | date:'short' }}</small>
+                                <small
+                                    class="badge badge-sm bg-{{ task.priority === 'High' ? 'danger' : task.priority === 'Medium' ? 'warning text-dark' : 'success' }} d-block mt-1"
+                                    style="width:fit-content">{{ task.priority }}</small>
+                            </div>
+                            <div class="d-flex flex-column gap-1 ms-2">
+                                <!-- Hiding management buttons for users as per request -->
+                                <!-- <button class="btn btn-xs btn-outline-secondary" title="Deactivate" (click)="promptDeactivate(task.id)">🚫</button> -->
+                                <!-- <button class="btn btn-xs btn-outline-danger" title="Delete" (click)="deleteTask(task.id)">✕</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-backdrop fade show" *ngIf="showEditModal" style="opacity:0.5;"></div>
+    <div class="modal fade show d-block" *ngIf="showEditModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">✏️ Edit Task</h5>
+                    <button type="button" class="btn-close btn-close-white" (click)="showEditModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div *ngIf="editError" class="alert alert-danger py-1 small">{{ editError }}</div>
+                    <div class="mb-2">
+                        <label class="form-label small">Title</label>
+                        <input class="form-control" [(ngModel)]="editTask.title" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Description</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="editTask.description"></textarea>
+                    </div>
+                    <div class="alert alert-info py-1 small mb-0">
+                        ℹ️ Saving will re-analyse your description and <strong>reset the deadline</strong> based on AI
+                        priority.
+                    </div>
+                </div>
+                <div class="modal-footer py-2">
+                    <button class="btn btn-secondary btn-sm" (click)="showEditModal = false">Cancel</button>
+                    <button class="btn btn-primary btn-sm" (click)="submitEdit()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deactivate Modal -->
+    <div class="modal-backdrop fade show" *ngIf="showDeactivateModal" style="opacity:0.5;"></div>
+    <div class="modal fade show d-block" *ngIf="showDeactivateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">🚫 Deactivate Task</h5>
+                    <button type="button" class="btn-close" (click)="showDeactivateModal = false"></button>
+                </div>
+                <div class="modal-body py-2">
+                    <p class="mb-1">Deactivate this task? It will be hidden but not deleted.</p>
+                </div>
+                <div class="modal-footer py-2">
+                    <button class="btn btn-secondary btn-sm" (click)="showDeactivateModal = false">Cancel</button>
+                    <button class="btn btn-warning btn-sm" (click)="confirmDeactivate()">Yes, Deactivate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-backdrop fade show" *ngIf="showDeleteModal" style="opacity:0.5;"></div>
+    <div class="modal fade show d-block" *ngIf="showDeleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">⚠️ Delete Task</h5>
+                    <button type="button" class="btn-close btn-close-white" (click)="showDeleteModal = false"></button>
+                </div>
+                <div class="modal-body py-2">
+                    <p class="mb-1">Are you sure you want to delete this task?</p>
+                    <p class="text-muted small mb-0">This action <strong>cannot be undone</strong>.</p>
+                </div>
+                <div class="modal-footer py-2">
+                    <button class="btn btn-secondary btn-sm" (click)="showDeleteModal = false">Cancel</button>
+                    <button class="btn btn-danger btn-sm" (click)="confirmDelete()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

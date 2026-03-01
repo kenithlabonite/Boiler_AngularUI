@@ -1,0 +1,38 @@
+<div class="chat-wrapper">
+    <div class="chat-header">
+        <span class="status-dot"></span>
+        <strong>Gemini AI Assistant</strong>
+    </div>
+
+    <div class="chat-history" #scrollMe>
+        
+        <div *ngFor="let msg of chatHistory" 
+             [ngClass]="msg.role === 'user' ? 'user-bubble' : 'ai-bubble'">
+            
+            <div class="message-content">
+                {{ msg.parts?.[0]?.text }}
+            </div>
+        </div>
+        
+        <div *ngIf="isLoading" class="ai-bubble loading">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <input 
+            type="text" 
+            [(ngModel)]="userInput" 
+            (keyup.enter)="send()" 
+            placeholder="Ask me anything..."
+            [disabled]="isLoading"
+        />
+        <button (click)="send()" [disabled]="isLoading || !userInput.trim()">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+        </button>
+    </div>
+</div>

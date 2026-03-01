@@ -1,0 +1,47 @@
+.dashboard-layout {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 60px); 
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.admin-sidebar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #f1f5f9;
+  
+  .details-card {
+    .user-greeting { font-size: 3.5rem; font-weight: 700; color: #1e293b; margin: 0; }
+    .login-subtext { font-size: 1.2rem; color: #64748b; margin-top: 10px; }
+    .role-badge {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 10px 20px;
+      background: #eff6ff;
+      color: #2563eb;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+  }
+}
+
+.ai-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  padding: 20px;
+}
+
+.welcome-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
