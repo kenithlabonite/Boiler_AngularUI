@@ -89,40 +89,49 @@
     }
   }
 
-  .sidebar-footer {
-    padding: 24px 16px 0;
-    border-top: 1px solid #f1f5f9;
 
-    .logout-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 20px;
-      border-radius: 12px;
-      color: #64748b;
-      border: none;
-      background: transparent;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #fef2f2;
-        color: #ef4444;
-      }
-    }
-  }
 }
 
 .main-content {
   flex: 1;
   margin-left: 260px;
-  padding: 40px;
+  padding: 0px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  .top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: #ef4444;
+        background: #fef2f2;
+        border: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #fee2e2;
+        }
+      }
+    }
+  }
 }
 
 .main-content.auth-page {

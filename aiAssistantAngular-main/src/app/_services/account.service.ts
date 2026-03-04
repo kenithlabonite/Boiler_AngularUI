@@ -44,11 +44,6 @@ export class AccountService {
     }
 
     refreshToken() {
-        // SAFETY CHECK: Don't even try if no account exists
-        if (!this.accountValue) {
-            console.log('No account to refresh, skipping');
-            return throwError(() => new Error('No account to refresh'));
-        }
 
         return this.http.post<any>(`${baseUrl}/refresh-token`, {}, { withCredentials: true })
             .pipe(
