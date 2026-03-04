@@ -1,16 +1,41 @@
-﻿﻿<div class="dashboard-layout">
-  <div class="admin-sidebar">
-    <div class="details-card">
-      <h1>Hi {{account?.firstName}}!</h1>
-      <p>You're logged in with Angular 15 & JWT!!</p>
-      <div class="role-badge">Role: Admin</div>
-    </div>
-  </div>
+﻿﻿<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1 class="page-title">My Courses</h1>
+  </header>
 
-  <div class="ai-main-content">
-    <h2 class="welcome-title">WELCOME TO AI ASSISTANCE</h2>
-    <div class="chat-holder">
-      <app-chat></app-chat>
+  <div class="courses-section">
+    <div class="tabs-container">
+      <button class="tab-item active">In Progress</button>
+      <button class="tab-item">Students</button>
+    </div>
+
+    <div class="courses-grid">
+      <!-- Course Card 1 -->
+      <div class="course-card">
+        <div class="card-content">
+          <h3 class="course-name">Subject 1</h3>
+          <p class="course-stats">(Count Of The Students) - (Who Submitted)</p>
+        </div>
+        <button class="continue-btn">continue</button>
+      </div>
+
+      <!-- Course Card 2 -->
+      <div class="course-card">
+        <div class="card-content">
+          <h3 class="course-name">Subject 2</h3>
+          <p class="course-stats">(Count Of The Students) - (Who Submitted)</p>
+        </div>
+        <button class="continue-btn">continue</button>
+      </div>
+
+      <!-- Course Card 3 -->
+      <div class="course-card">
+        <div class="card-content">
+          <h3 class="course-name">Subject 3</h3>
+          <p class="course-stats">(Count Of The Students) - (Who Submitted)</p>
+        </div>
+        <button class="continue-btn">continue</button>
+      </div>
     </div>
   </div>
 </div>

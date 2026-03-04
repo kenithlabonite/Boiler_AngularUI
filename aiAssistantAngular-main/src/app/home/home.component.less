@@ -1,47 +1,79 @@
-.dashboard-layout {
-  display: flex;
+.dashboard-container {
+  max-width: 1200px;
   width: 100%;
-  height: calc(100vh - 60px); 
-  background-color: #ffffff;
-  overflow: hidden;
 }
 
-.admin-sidebar {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid #f1f5f9;
-  
-  .details-card {
-    .user-greeting { font-size: 3.5rem; font-weight: 700; color: #1e293b; margin: 0; }
-    .login-subtext { font-size: 1.2rem; color: #64748b; margin-top: 10px; }
-    .role-badge {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 10px 20px;
-      background: #eff6ff;
-      color: #2563eb;
-      border-radius: 10px;
-      font-weight: 600;
-    }
+.dashboard-header {
+  margin-bottom: 32px;
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #000;
+    margin: 0;
   }
 }
 
-.ai-main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f8fafc;
-  padding: 20px;
+.courses-section {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  min-height: 300px;
 }
 
-.welcome-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #334155;
-  margin-bottom: 20px;
-  letter-spacing: 1px;
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.course-card {
+  background: #f1f1f1;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-content {
+    .course-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #000;
+      margin: 0 0 8px 0;
+    }
+
+    .course-stats {
+      font-size: 0.9rem;
+      color: #475569;
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  .continue-btn {
+    align-self: flex-start;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #334155;
+    }
+  }
 }

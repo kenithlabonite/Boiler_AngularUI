@@ -7,7 +7,7 @@ import { AccountService, AlertService } from '@app/_services';
 @Component({ templateUrl: 'forgot-password.component.html' })
 export class ForgotPasswordComponent implements OnInit {
     form!: FormGroup;
-    loading = false;
+    submitting = false;
     submitted = false;
 
     constructor(
@@ -36,10 +36,10 @@ export class ForgotPasswordComponent implements OnInit {
             return;
         }
 
-        this.loading = true;
+        this.submitting = true;
         this.accountService.forgotPassword(this.f.email.value)
             .pipe(first())
-            .pipe(finalize(() => this.loading = false))
+            .pipe(finalize(() => this.submitting = false))
             .subscribe({
                 next: () => this.alertService.success('Please check your email for password reset instructions'),
                 error: error => this.alertService.error(error)

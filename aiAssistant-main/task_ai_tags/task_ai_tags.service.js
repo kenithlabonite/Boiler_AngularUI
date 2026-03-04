@@ -4,11 +4,11 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function classifyPriority(description) {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const today = new Date().toISOString().split('T')[0]; // gets today's date e.g. "2026-02-25"
+        const today = new Date().toISOString().split('T')[0]; // gets today's date e.g. "2026-02-25"
 
-const prompt = `
+        const prompt = `
     You are a strict task priority classifier. Respond with ONLY a JSON object, nothing else.
     No markdown, no explanation, no code blocks.
 
@@ -70,7 +70,7 @@ function extractPriority(text) {
     if (cleaned.includes("high")) return "High";
     if (cleaned.includes("low")) return "Low";
 
-    return "low"; 
+    return "low";
 }
 
 module.exports = {

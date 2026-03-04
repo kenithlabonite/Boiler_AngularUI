@@ -5,7 +5,7 @@ require('dotenv').config();
 // Initialize Gemini AI with API key from environment
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const systemInstruction = 
+const systemInstruction =
     'You are a helpful and knowledgeable instructor. ' +
     'Provide clear, concise, and structured answers. Use markdown formatting extensively.';
 
@@ -15,9 +15,9 @@ async function sendMessage(req, res) {
 
         // Validate input
         if (!message || typeof message !== 'string') {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                error: 'Message is required and must be a string' 
+                error: 'Message is required and must be a string'
             });
         }
 
@@ -31,15 +31,16 @@ async function sendMessage(req, res) {
         }
 
         // Use model compatible with SDK version 0.24.1
-        const model = genAI.getGenerativeModel({ 
-            model: 'gemini-2.5-flash'
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            systemInstruction: systemInstruction
         });
 
         // Build conversation history - Filter out leading 'model' messages
         let history = [];
         if (conversationHistory && Array.isArray(conversationHistory)) {
             history = conversationHistory.slice(-10); // Last 10 messages for context
-            
+
             // CRITICAL: Remove any leading 'model' messages
             // Gemini API requires chat to START with a 'user' message
             while (history.length > 0 && history[0].role === 'model') {
@@ -65,7 +66,7 @@ async function sendMessage(req, res) {
         let result;
         let attempts = 0;
         const maxAttempts = 3;
-        
+
         while (attempts < maxAttempts) {
             try {
                 result = await chat.sendMessage(message);
@@ -79,7 +80,7 @@ async function sendMessage(req, res) {
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
             }
         }
-        
+
         const response = await result.response;
         const text = response.text();
 
@@ -95,7 +96,7 @@ async function sendMessage(req, res) {
         console.error('Error type:', error.constructor.name);
         console.error('API Key exists:', !!process.env.GEMINI_API_KEY);
         console.error('========================');
-        
+
         // Handle specific Gemini API errors
         if (error.message && error.message.includes('API key not valid')) {
             return res.status(401).json({
